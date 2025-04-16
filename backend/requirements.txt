@@ -1,0 +1,6 @@
+django
+gunicorn
+whitenoise[brotli]
+djangorestframework
+python-dotenv
+psycopg

@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roommate Accounting System</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Lora&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header-with-logout">
+            <h1>Roommate Accounting System</h1>
+            <button onclick="window.location.href='/login'" class="logout-btn">Logout</button>
+        </header>
+
+
+
+
+        <!-- Total Debt Section -->
+        <section id="totalDebtSection">
+            <h2>Roommates Total Debt</h2>
+            <table id="totalDebtTable">
+                <!-- Total Debt Table will be populated here -->
+            </table>
+            <div class="circle-container">
+                <div id="pixiCanvasContainer"></div> <!-- PixiJS render area -->
+            </div>
+        </section>
+
+        <!-- Debt Relations Section -->
+        <section id="debtRelationsSection">
+            <h2>Debt Relationships</h2>
+            <table id="debtRelationsTable">
+                <!-- Debt relations will be populated dynamically -->
+            </table>
+        </section>
+
+        <!-- Debt Update Section -->
+        <section id="debtAddSection">
+            <h2>Add Debt</h2>
+            <form id="debtAddForm" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                <div>
+                    <label for="creditor">From:</label>
+                    <select id="creditor" required></select>
+                </div>
+
+                <div>
+                    <label for="debtor">To:</label>
+                    <select id="debtor" required></select>
+                </div>
+
+                <div>
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" required />
+                </div>
+                <div>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" required placeholder="Enter a description" />
+                </div>
+                <div>
+                    <button type="submit">Add Debt</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- History Section -->
+        <button id="toggleHistoryBtn">Show Transaction History</button>
+        <section id="historySection" class="history-section">
+            <h3>Transaction History</h3>
+            <table id="transactionHistoryTable">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionHistoryList">
+                    <!-- Transaction history will be populated here -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+
+</html>
