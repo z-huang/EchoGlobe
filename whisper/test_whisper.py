@@ -41,8 +41,8 @@ def test_transcribe(file_path: str, server_url: str = "http://localhost:9000"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test Whisper transcription service")
     parser.add_argument("file", help="Path to the audio file to transcribe")
-    parser.add_argument("--url", default="http://localhost:9000",
-                      help="Whisper service URL (default: http://localhost:9000)")
+    parser.add_argument("--url", default="http://localhost:9876",
+                      help="Whisper service URL (default: http://localhost:9876)")
     
     args = parser.parse_args()
     test_transcribe(args.file, args.url) 

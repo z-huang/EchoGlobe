@@ -70,7 +70,7 @@ async def transcribe_audio(audio: UploadFile):
         # Transcribe using Whisper
         result = model.transcribe(
             audio_array,
-            language=os.getenv("WHISPER_LANGUAGE", "en"),
+            language=None, #os.getenv("WHISPER_LANGUAGE", "zh"),
             task=os.getenv("WHISPER_TASK", "transcribe"),
             fp16=torch.cuda.is_available()
         )
@@ -83,7 +83,8 @@ async def transcribe_audio(audio: UploadFile):
         
         return {
             "text": result["text"].strip(),
-            "confidence": float(confidence)
+            "confidence": float(confidence),
+            "language": result["language"]
         }
         
     except Exception as e:
@@ -91,4 +92,4 @@ async def transcribe_audio(audio: UploadFile):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=9000) 
+    uvicorn.run(app, host="0.0.0.0", port=9876) 

@@ -4,8 +4,10 @@
 if command -v conda &> /dev/null; then
     echo "Creating conda environment..."
     # Create conda environment if it doesn't exist
-    conda env create -f environment.yml 2>/dev/null || conda env update -f environment.yml
+    conda env create --file=environment.yml 2>/dev/null || conda env update --file=environment.yml
     # Activate conda environment
+    conda init bash
+    source ~/.bashrc
     conda activate echoglobe_whisper
 else
     echo "Creating Python virtual environment..."
