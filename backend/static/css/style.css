@@ -24,6 +24,7 @@ body {
 
 /* Chat Panel */
 .chat-panel {
+    position: relative; /* Ensure the chat-popup is positioned relative to this container */
     width: 60%;
     background-color: #3a3b47;
     padding: 10px;
@@ -38,6 +39,107 @@ body {
     padding: 10px;
     border-radius: 8px;
     overflow-y: auto;
+}
+/* Chat Popup Styling */
+.chat-popup {
+    position: absolute; /* Position relative to the chat panel */
+    width: 300px;
+    height: 400px;
+    background-color: #2c2d31; /* Match the dark theme background */
+    border: 1px solid #444; /* Subtle border for separation */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Darker shadow for depth */
+    display: none; /* Initially hidden */
+    z-index: 1000;
+    overflow: hidden;
+
+    /* Position at the bottom-right of the chat-panel */
+    bottom: 10px; /* Add some spacing from the bottom */
+    right: 10px; /* Add some spacing from the right */
+}
+
+.chat-popup-header {
+    background-color: #3a3b47; /* Match the chat panel background */
+    padding: 10px;
+    border-bottom: 1px solid #555; /* Subtle border for separation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff; /* White text for contrast */
+}
+
+.chat-popup-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.chat-popup-header .close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.chat-popup-header .close-btn:hover {
+    color: #d9534f; /* Red color on hover */
+}
+
+.chat-popup-messages {
+    padding: 10px;
+    height: calc(100% - 125px); /* Adjust height dynamically */
+    overflow-y: auto;
+    background-color: #2c2d31; /* Match the dark theme */
+    color: #fff; /* White text for contrast */
+}
+
+.chat-popup-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #555; /* Subtle border for separation */
+    background-color: #3a3b47; /* Match the chat panel background */
+}
+
+.chat-popup-input input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #2c2d31; /* Match the dark theme */
+    color: #fff; /* White text for contrast */
+    margin-right: 5px;
+}
+
+.chat-popup-input input::placeholder {
+    color: #aaa; /* Subtle placeholder color */
+}
+
+.chat-popup-input button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.chat-popup-input button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.user-message {
+    background-color: #007bff;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    max-width: 80%;
+    word-wrap: break-word;
+    align-self: flex-end; /* Align user messages to the right */
 }
 /* Prompt Container Styling */
 .prompt-container {

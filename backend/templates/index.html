@@ -46,6 +46,10 @@
                         <a href="#" data-lang="de-DE">Deutsch</a>
                     </div>
                 </div>
+                <button class="action-btn new-chat-btn" id="newChatBtn">
+                    <span class="btn-icon">➕</span>
+                    <span data-i18n="new_chat">New Session</span>
+                </button>
             </div>
         </div>
 
@@ -53,7 +57,7 @@
             <!-- Dynamic transcript content -->
         </div>
 
-        <div id="chatPopup" class="chat-popup" style="display: none;">
+        <div id="chatPopup" class="chat-popup">
             <div class="chat-popup-header">
                 <h3 data-i18n="chat_assistant">Chat Assistant</h3>
                 <button class="close-btn" id="closeChatBtn">×</button>
@@ -72,4 +76,7 @@
         <!-- Terminology content here -->
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/chatbox.js' %}"></script>
 {% endblock %}
