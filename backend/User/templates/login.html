@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}
+    User Login
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block nav_links %}
+    <!-- Override nav-links to remove navigation bar -->
+{% endblock %}
+
+{% block sidebar %}
+    <!-- Override the sidebar block to remove navigation -->
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h1>User Login</h1>
+    <form class="form-with-validation" action="/user/login/" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username</label>
+            {{ form.username }} <!-- Render username field -->
+            <div class="error-message">
+                {{ form.username.errors }} <!-- Display username-specific errors -->
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            {{ form.password }} <!-- Render password field -->
+            <div class="error-message">
+                {{ form.password.errors }} <!-- Display password-specific errors -->
+            </div>
+        </div>
+        {{ form.non_field_errors }} <!-- Display form-wide errors -->
+        {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
+        {% endif %}
+        <button class="form-submit">Login</button>
+    </form>
+    <div class="footer">
+        <p>Don't have an account?</p>
+        <p><a href="{% url 'register' %}">Signup</a></p>
+    </div>
+</div>
+{% endblock %}
