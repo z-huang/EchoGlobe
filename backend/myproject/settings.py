@@ -125,3 +125,16 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# MinIO Storage Configuration
+MINIO_ENDPOINT = 'minio:9000'
+MINIO_ACCESS_KEY = 'minioadmin'  # Change this in production
+MINIO_SECRET_KEY = 'minioadmin'  # Change this in production
+MINIO_BUCKET_NAME = 'echoglobe'
+MINIO_SECURE = False  # Set to True if using HTTPS
+
+# LLM Configuration
+LLM_SERVER_URL = 'http://llm-server:8000'  # Update with your LLM server URL
+
+# Whisper Configuration
+WHISPER_SERVER_URL = 'http://whisper:9000'  # Update with your Whisper server URL

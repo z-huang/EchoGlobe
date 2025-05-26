@@ -1,24 +1,35 @@
+version: '3.8'
+
 name: echoglobe
 services:
   backend:
     build: ./backend
     volumes:
       - ./backend:/app
-    expose:
-      - "8001"
-    env_file:
-      - .env
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=myproject.settings
+      - PYTHONUNBUFFERED=1
     depends_on:
       db:
         condition: service_healthy
       s3:
         condition: service_healthy
+      whisper:
+        condition: service_started
 
   frontend:
     build: ./frontend
     volumes:
       - ./frontend:/app
-
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
 
   nginx:
     image: nginx:stable
@@ -59,6 +70,24 @@ services:
       interval: 5s
       timeout: 3s
       retries: 2
+
+  whisper:
+    build: ./whisper
+    volumes:
+      - ./whisper:/app
+    ports:
+      - "9000:9000"
+    environment:
+      - WHISPER_MODEL_SIZE=base
+      - WHISPER_LANGUAGE=en
+      - WHISPER_TASK=transcribe
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
 volumes:
   postgres_data:
