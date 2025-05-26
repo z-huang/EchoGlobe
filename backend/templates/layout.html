@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Real-Time Transcriber and Translator{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- CSS -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- JS -->
+    {% block extra_js %}{% endblock %}
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-container">
+                <h1 class="logo">🎙️ LiveTranscribe</h1>
+                <nav class="nav-links">
+                    {% block nav_links %}
+                        {% if user.is_authenticated %}
+                            <form class="logout" action="{% url 'logout' %}" method="post">
+                                {% csrf_token %} 
+                                <button class="logout-button" title="Logout">👋 Logout </button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'register' %}">
+                                <span title="Signup">🌱 Signup </span>
+                            </a> 
+                            <a href="{% url 'login' %}">
+                                <span title="Login">🔐 Login </span>
+                            </a>
+                        {% endif %}
+                    {% endblock %}
+                </nav>
+            </div>
+        </header>
+
+        <!-- Sidebar or nav can be included via another block if needed -->
+        {% block sidebar %}{% endblock %}
+
+        <!-- Main Content -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    {% block modals %}{% endblock %}
+</body>
+</html>

@@ -1,97 +1,75 @@
+{% extends 'layout.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="zh-Hant">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roommate Accounting System</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Lora&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-</head>
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+{% endblock %}
 
-<body>
-    <div class="container">
-        <header class="header-with-logout">
-            <h1>Roommate Accounting System</h1>
-            <button onclick="window.location.href='/login'" class="logout-btn">Logout</button>
-        </header>
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
 
 
-
-
-        <!-- Total Debt Section -->
-        <section id="totalDebtSection">
-            <h2>Roommates Total Debt</h2>
-            <table id="totalDebtTable">
-                <!-- Total Debt Table will be populated here -->
-            </table>
-            <div class="circle-container">
-                <div id="pixiCanvasContainer"></div> <!-- PixiJS render area -->
-            </div>
-        </section>
-
-        <!-- Debt Relations Section -->
-        <section id="debtRelationsSection">
-            <h2>Debt Relationships</h2>
-            <table id="debtRelationsTable">
-                <!-- Debt relations will be populated dynamically -->
-            </table>
-        </section>
-
-        <!-- Debt Update Section -->
-        <section id="debtAddSection">
-            <h2>Add Debt</h2>
-            <form id="debtAddForm" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
-                <div>
-                    <label for="creditor">From:</label>
-                    <select id="creditor" required></select>
-                </div>
-
-                <div>
-                    <label for="debtor">To:</label>
-                    <select id="debtor" required></select>
-                </div>
-
-                <div>
-                    <label for="amount">Amount:</label>
-                    <input type="number" id="amount" required />
-                </div>
-                <div>
-                    <label for="description">Description:</label>
-                    <input type="text" id="description" required placeholder="Enter a description" />
-                </div>
-                <div>
-                    <button type="submit">Add Debt</button>
-                </div>
-            </form>
-        </section>
-
-        <!-- History Section -->
-        <button id="toggleHistoryBtn">Show Transaction History</button>
-        <section id="historySection" class="history-section">
-            <h3>Transaction History</h3>
-            <table id="transactionHistoryTable">
-                <thead>
-                    <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Amount</th>
-                        <th>Description</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody id="transactionHistoryList">
-                    <!-- Transaction history will be populated here -->
-                </tbody>
-            </table>
-        </section>
+<div class="main-container">
+    <!-- History Section -->
+    <div class="history-panel">
+        <h3>History</h3>
+        <!-- History content here -->
     </div>
 
-    <script src="https://pixijs.download/release/pixi.js"></script>
-    <script src="{% static 'js/index.js' %}"></script>
-</body>
+    <!-- Chat Section -->
+    <div class="chat-panel">
+        <div class="prompt-container">
+            <h1 data-i18n="transcript">Transcript</h1>
+            <div class="action-buttons">
+                <button class="action-btn record-btn" id="startBtn">
+                    <span class="btn-icon">●</span>
+                    <span data-i18n="record">Record</span>
+                </button>
+                <button class="action-btn upload-btn">
+                    <span class="btn-icon">↑</span>
+                    <span data-i18n="upload">Upload</span>
+                </button>
+                <button class="action-btn chat-btn" id="chatBtn">
+                    <span class="btn-icon">💬</span>
+                    <span data-i18n="chat">Chat</span>
+                </button>
+                <div class="dropdown">
+                    <button class="action-btn language-btn">
+                        <span class="btn-icon">🌐</span>
+                        中文
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" data-lang="cmn-Hant-TW" class="active">中文</a>
+                        <a href="#" data-lang="en-US">English</a>
+                        <a href="#" data-lang="ja-JP">日本語</a>
+                        <a href="#" data-lang="de-DE">Deutsch</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-</html>
+        <div id="transcriptArea" class="transcript-area" style="display: none;">
+            <!-- Dynamic transcript content -->
+        </div>
+
+        <div id="chatPopup" class="chat-popup" style="display: none;">
+            <div class="chat-popup-header">
+                <h3 data-i18n="chat_assistant">Chat Assistant</h3>
+                <button class="close-btn" id="closeChatBtn">×</button>
+            </div>
+            <div class="chat-popup-messages" id="chatMessages"></div>
+            <div class="chat-popup-input">
+                <input type="text" placeholder="Type your message..." data-i18n-placeholder="chat_placeholder" id="chatInput">
+                <button id="sendChatBtn" style="font-size: 20px">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terminology Section -->
+    <div class="terminology-panel">
+        <h3>Terminology</h3>
+        <!-- Terminology content here -->
+    </div>
+</div>
+{% endblock %}

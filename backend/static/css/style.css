@@ -1,0 +1,184 @@
+/* Set the background color of the body */
+body {
+    background-color: #000; /* Black background */
+    color: #fff; /* Optional: Set text color to white for better contrast */
+}
+
+/* ===== MAIN LAYOUT STYLING ===== */
+.main-container {
+    display: flex;
+    height: calc(100vh - 60px); /* Adjust based on header height */
+    overflow: hidden;
+    gap: 10px;
+    padding: 10px;
+}
+
+/* History Panel */
+.history-panel {
+    width: 20%;
+    background-color: #2c2d31;
+    padding: 10px;
+    border-radius: 8px;
+    overflow-y: auto;
+}
+
+/* Chat Panel */
+.chat-panel {
+    width: 60%;
+    background-color: #3a3b47;
+    padding: 10px;
+    border-radius: 8px;
+    overflow-y: auto;
+}
+
+/* Terminology Panel */
+.terminology-panel {
+    width: 20%;
+    background-color: #2c2d31;
+    padding: 10px;
+    border-radius: 8px;
+    overflow-y: auto;
+}
+/* Prompt Container Styling */
+.prompt-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #2c2d31; /* Dark background for contrast */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Prompt Title */
+.prompt-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffffff; /* White text for contrast */
+    margin-bottom: 15px;
+}
+
+/* Action Buttons */
+.prompt-container .action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Individual Action Button */
+.prompt-container .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #40414F;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.prompt-container .action-btn:hover {
+    background-color: #585a66;
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Button Icons */
+.prompt-container .btn-icon {
+    font-size: 1.2rem;
+}
+
+/* Dropdown Styling */
+.prompt-container .dropdown {
+    position: relative;
+}
+
+.prompt-container .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #2c2d31;
+    border: 1px solid #444;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 150px;
+}
+
+.prompt-container .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.prompt-container .dropdown-content a {
+    color: #ffffff;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.2s ease;
+}
+
+.prompt-container .dropdown-content a:hover {
+    background-color: #383942;
+    color: #6ab0c4;
+}
+/* Header Container */
+.header-container {
+    display: flex;
+    justify-content: space-between; /* Space between logo and buttons */
+    align-items: center; /* Vertically center items */
+    padding: 10px 20px; /* Add some padding */
+    background-color: #2c2d31; /* Background color for the header */
+    border-bottom: 1px solid #444; /* Optional: Add a border at the bottom */
+}
+
+/* Logo Styling */
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffffff; /* White text for the logo */
+    margin: 0; /* Remove default margin */
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    gap: 15px; /* Add spacing between buttons */
+}
+
+.nav-links a, .logout-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 15px;
+    background-color: #40414F; /* Dark background for buttons */
+    color: #ffffff; /* White text for contrast */
+    border: 1px solid #555; /* Subtle border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1rem;
+    text-decoration: none; /* Remove underline for links */
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-links a:hover, .logout-button:hover {
+    background-color: #585a66; /* Lighter background on hover */
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.logout-button {
+    border: none; /* Remove border for the logout button */
+    background-color: #d9534f; /* Red background for logout */
+    color: #ffffff; /* White text */
+}
+
+.logout-button:hover {
+    background-color: #c9302c; /* Darker red on hover */
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}

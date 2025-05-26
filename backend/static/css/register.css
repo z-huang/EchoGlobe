@@ -1,76 +1,120 @@
+/* General Styling */
 body {
-    font-family: 'Poppins', sans-serif;
-    background: #f4f6f8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+    background-color: #000; /* Black background */
+    color: #fff; /* White text for contrast */
+    font-family: Arial, sans-serif;
     margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
 }
 
+/* Register Container */
 .register-container {
-    background: white;
-    padding: 2rem 3rem;
-    border-radius: 1rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    position: relative;
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-form {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: #2c2d31; /* Dark background for contrast */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
 
-label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+/* Register Header */
+.register-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffffff; /* White text for contrast */
+    margin-bottom: 20px;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    border: 1px solid #ccc;
-    margin-bottom: 1.5rem;
+/* Form Styling */
+.form-with-validation {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
 }
 
-button {
-    background: #4a90e2;
-    color: white;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 0.5rem;
+.form-with-validation input[type="text"],
+.form-with-validation input[type="email"],
+.form-with-validation input[type="password"] {
+    padding: 10px;
     font-size: 1rem;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #40414F;
+    color: #ffffff;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.form-with-validation input[type="text"]:focus,
+.form-with-validation input[type="email"]:focus,
+.form-with-validation input[type="password"]:focus {
+    outline: none;
+    border-color: #6ab0c4;
+    background-color: #383942;
+}
+
+/* Submit Button */
+.form-submit {
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    background-color: #6ab0c4;
+    color: #ffffff;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background: #357ABD;
+.form-submit:hover {
+    background-color: #5a9bb0;
+    transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
+/* Footer Section */
 .footer {
+    margin-top: 20px;
     text-align: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #888;
+    color: #ffffff;
 }
 
-.notification {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 0.75rem 1rem;
-    border: 1px solid #f5c6cb;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    display: none;
-    font-size: 0.9rem;
+.footer a {
+    color: #6ab0c4;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.footer a:hover {
+    color: #5a9bb0;
+}
+
+/* Form Group */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align labels and inputs to the left */
+    width: 100%;
+    gap: 5px; /* Add spacing between label and input */
+}
+
+.form-group label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff; /* White text for labels */
+}
+
+.form-with-validation input[type="text"],
+.form-with-validation input[type="email"],
+.form-with-validation input[type="password"] {
+    width: 100%; /* Ensure inputs take full width of the container */
+    box-sizing: border-box; /* Include padding and border in width */
 }
