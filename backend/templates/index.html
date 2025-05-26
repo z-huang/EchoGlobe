@@ -60,6 +60,7 @@
         <div id="chatPopup" class="chat-popup">
             <div class="chat-popup-header">
                 <h3 data-i18n="chat_assistant">Chat Assistant</h3>
+                <button class="clear-history-btn" id="clearHistoryBtn" style="margin-right: 10px;">🗑</button>
                 <button class="close-btn" id="closeChatBtn">×</button>
             </div>
             <div class="chat-popup-messages" id="chatMessages"></div>
@@ -78,5 +79,6 @@
 </div>
 {% endblock %}
 {% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="{% static 'js/chatbox.js' %}"></script>
 {% endblock %}

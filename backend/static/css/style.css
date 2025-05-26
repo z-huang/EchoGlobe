@@ -89,7 +89,7 @@ body {
 
 .chat-popup-messages {
     padding: 10px;
-    height: calc(100% - 125px); /* Adjust height dynamically */
+    height: calc(100% - 135px); /* Adjust height dynamically */
     overflow-y: auto;
     background-color: #2c2d31; /* Match the dark theme */
     color: #fff; /* White text for contrast */
@@ -130,16 +130,72 @@ body {
     background-color: #0056b3;
     transform: scale(1.05); /* Slight zoom effect on hover */
 }
+/* Style for Markdown-rendered messages */
 
+/* User's messages aligned to the right */
 .user-message {
-    background-color: #007bff;
-    color: #fff;
+    background-color: #007bff; /* Blue background for user's messages */
+    color: #fff; /* White text for contrast */
     padding: 8px;
     border-radius: 4px;
     margin-bottom: 5px;
     max-width: 80%;
     word-wrap: break-word;
     align-self: flex-end; /* Align user messages to the right */
+    text-align: left;
+}
+
+/* Chatbot's messages aligned to the left */
+.bot-message {
+    background-color: #444; /* Dark gray background for chatbot's messages */
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    max-width: 80%;
+    word-wrap: break-word;
+    align-self: flex-start; /* Align chatbot messages to the left */
+    text-align: left; /* Ensure text is left-aligned */
+}
+
+.user-message strong, .bot-message strong {
+    font-weight: bold;
+}
+
+.user-message em, .bot-message em {
+    font-style: italic;
+}
+
+.user-message code, .bot-message code {
+    font-family: monospace;
+    background-color: #2c2d31;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+.clear-history-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.clear-history-btn:hover {
+    color: #d9534f; /* Red color on hover */
+}
+
+/* Chatbot's messages aligned to the left */
+.bot-message {
+    background-color: #444; /* Dark gray background for chatbot's messages */
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    max-width: 80%;
+    word-wrap: break-word;
+    align-self: flex-start; /* Align chatbot messages to the left */
+    text-align: left; /* Ensure text is left-aligned */
 }
 /* Prompt Container Styling */
 .prompt-container {
