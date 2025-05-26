@@ -1,0 +1,22 @@
+name: echoglobe_whisper
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch
+  - pytorch-cuda=12.1
+  - torchaudio
+  - pip
+  - ffmpeg
+  - pip:
+    - fastapi==0.109.2
+    - uvicorn==0.27.1
+    - python-multipart==0.0.9
+    - openai-whisper==20231117
+    - numpy==1.26.4
+    - pydub==0.25.1
+    - python-dotenv==1.0.1
+    - ffmpeg-python==0.2.0 
