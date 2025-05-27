@@ -94,8 +94,10 @@
         <div id="chatPopup" class="chat-popup">
             <div class="chat-popup-header">
                 <h3 data-i18n="chat_assistant">Chat Assistant</h3>
-                <button class="clear-history-btn" id="clearHistoryBtn" style="margin-right: 10px;">🗑</button>
-                <button class="close-btn" id="closeChatBtn">×</button>
+                <div style="display: flex; align-items: center; gap: 3px;">
+                    <button class="clear-history-btn" id="clearHistoryBtn">🗑</button>
+                    <button class="close-btn" id="closeChatBtn">×</button>
+                </div>
             </div>
             <div class="chat-popup-messages" id="chatMessages"></div>
             <div class="chat-popup-input">

@@ -105,12 +105,24 @@ body {
     color: #d9534f; /* Red color on hover */
 }
 
+.chat-popup-header {
+    display: flex;
+    justify-content: space-between; /* 左右兩邊貼齊 */
+    align-items: center;            /* 垂直置中 */
+    padding: 5px 5px;
+    padding-left: 12px;
+}
+
+
 .chat-popup-messages {
     padding: 10px;
     height: calc(100% - 135px); /* Adjust height dynamically */
     overflow-y: auto;
     background-color: #2c2d31; /* Match the dark theme */
     color: #fff; /* White text for contrast */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .chat-popup-input {
@@ -160,6 +172,7 @@ body {
     max-width: 80%;
     word-wrap: break-word;
     align-self: flex-end; /* Align user messages to the right */
+    word-wrap: break-word;
     text-align: left;
 }
 
@@ -167,7 +180,7 @@ body {
 .bot-message {
     background-color: #444; /* Dark gray background for chatbot's messages */
     color: #fff;
-    padding: 8px;
+    padding: 1px;
     border-radius: 4px;
     margin-bottom: 5px;
     max-width: 80%;
@@ -187,9 +200,16 @@ body {
 .user-message code, .bot-message code {
     font-family: monospace;
     background-color: #2c2d31;
-    padding: 2px 4px;
+    padding: 2px 2px;
     border-radius: 4px;
 }
+
+.user-message p, .bot-message p {
+    margin: 0;       /* 移除段落預設 margin */
+    padding: 0;
+    line-height: 1;
+}
+
 .clear-history-btn {
     background: none;
     border: none;
