@@ -357,18 +357,40 @@ body {
 }
 
 .transcript-block {
-    position: relative; /* 為絕對定位的小方塊提供參考基準 */
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    /* Remove position: relative unless needed for absolutely positioned children */
+    /* position: relative; */
+    width: 100%;
+    min-height: 48px;
+    height: 100%;
+    flex: 1 1 auto;
 }
 
+/* Make the floating header inline and left-aligned */
 .transcript-floating-header {
-    position: absolute;
-    top: 24.5%;
-    left: 3%;
-    background-color: #707176;
-    padding: 6px 10px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    z-index: 10;
+    position: static;
+    display: flex;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    padding: 0 10px 0 0;
+    min-width: 90px;
+    margin: 0;
+    z-index: auto;
+}
+
+/* Make the transcript content fill the rest of the line and height */
+#sourceTranscript,
+.transcript-block > div[id$="Transcript"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 32px;
+    max-width: 100%;
+    overflow-y: auto;
+    align-self: stretch;
+    display: block;
 }
 
 .transcript-floating-header h4 {

@@ -30,12 +30,6 @@
 
     <!-- Chat Section -->
     <div class="chat-panel">
-        <div class="transcript-floating-header">
-            <h4>
-            Source
-            <button id="editSourceBtn" class="edit-transcript-btn" title="Edit Source">✏️</button>
-            </h4>
-        </div>
         <div class="prompt-container">
             <h1>{{ title }}</h1>
             <div class="action-buttons">
@@ -72,6 +66,11 @@
 
         <!-- Conversation Content Section -->
         {% if content %}
+        <div class="transcript-floating-header">
+            <h4>
+            Source<button id="editSourceBtn" class="edit-transcript-btn" title="Edit Source">✏️</button>
+            </h4>
+        </div>
         <div class="prompt-container">
             <div class="transcript-section">
                 <div class="transcript-block" data-lang="source">
