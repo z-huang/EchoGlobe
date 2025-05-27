@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (message) {
             // Display the user's message
             const userMessageElement = document.createElement('div');
-            userMessageElement.innerHTML = marked.parse(`**User:** ${message}`); // Render Markdown
+            userMessageElement.innerHTML = marked.parse(`${message}`); // Render Markdown
             userMessageElement.className = 'user-message';
             chatMessages.appendChild(userMessageElement);
             chatInput.value = ''; // Clear the input field
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
                     // Display the chatbot's response
                     const botMessageElement = document.createElement('div');
-                    botMessageElement.innerHTML = marked.parse(`**AI:** ${botMessage}`); // Render Markdown
+                    botMessageElement.innerHTML = marked.parse(`${botMessage}`); // Render Markdown
                     botMessageElement.className = 'bot-message';
                     chatMessages.appendChild(botMessageElement);
                     chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
