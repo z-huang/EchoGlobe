@@ -6,11 +6,12 @@ import whisper
 import numpy as np
 from fastapi import FastAPI, UploadFile, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from pydub import AudioSegment
 import torch
 import json
 import base64
 from RealtimeSTT import AudioToTextRecorder
+import ffmpeg
+import asyncio
 
 app = FastAPI()
 
@@ -38,6 +39,7 @@ def process_audio(audio_data: bytes, source_format: str = "webm") -> np.ndarray:
         temp_audio.flush()
         
         # Load audio using pydub
+        from pydub import AudioSegment
         audio = AudioSegment.from_file(temp_audio.name, format=source_format)
         
         # Convert to WAV format if needed
@@ -168,19 +170,54 @@ async def websocket_transcribe(websocket: WebSocket):
             pass
 
 def convert_to_pcm(audio_data: bytes, source_format: str = "webm") -> bytes:
-    """Convert audio data to PCM format"""
-    with tempfile.NamedTemporaryFile(suffix=f".{source_format}") as temp_audio:
-        temp_audio.write(audio_data)
-        temp_audio.flush()
+    """Convert audio data to PCM format using ffmpeg"""
+    
+    try:
+        # Create input and output temp files
+        with tempfile.NamedTemporaryFile(suffix=f".{source_format}", delete=False) as temp_in, \
+             tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_out:
+            
+            # Write input audio
+            temp_in.write(audio_data)
+            temp_in.flush()
+            in_filename = temp_in.name
+            out_filename = temp_out.name
+            
         
-        # Load audio using pydub
-        audio = AudioSegment.from_file(temp_audio.name, format=source_format)
-        
-        # Convert to PCM format
-        pcm_data = io.BytesIO()
-        # Export as WAV without header (raw PCM)
-        audio.export(pcm_data, format="raw", codec="pcm_s16le", parameters=["-ar", "16000", "-ac", "1", "-f", "s16le"])
-        return pcm_data.getvalue()
+        try:
+            # Use ffmpeg-python to convert to WAV
+            
+            # Convert directly to PCM using ffmpeg
+            stream = ffmpeg.input(in_filename)
+            stream = ffmpeg.output(stream, 'pipe:',
+                               format='s16le',  # PCM signed 16-bit little-endian
+                               acodec='pcm_s16le',
+                               ac=1,  # mono
+                               ar=16000)  # 16kHz
+            
+            # Run ffmpeg and capture output directly as bytes
+            pcm_data, _ = ffmpeg.run(stream, capture_stdout=True, capture_stderr=True)
+            
+            return pcm_data
+            
+        except ffmpeg.Error as e:
+            print("[DEBUG] FFmpeg error:")
+            print(f"[DEBUG] stdout: {e.stdout.decode() if e.stdout else ''}")
+            print(f"[DEBUG] stderr: {e.stderr.decode() if e.stderr else ''}")
+            raise
+        finally:
+            # Clean up temp files
+            try:
+                os.unlink(in_filename)
+                os.unlink(out_filename)
+                print("[DEBUG] Cleaned up temporary files")
+            except Exception as e:
+                print(f"[DEBUG] Warning: Failed to clean up temporary files: {str(e)}")
+                
+    except Exception as e:
+        print(f"[DEBUG] Error in conversion: {str(e)}")
+        raise
+
 
 @app.websocket("/ws/stream_transcribe")
 async def websocket_stream_transcribe(websocket: WebSocket):
@@ -197,9 +234,30 @@ async def websocket_stream_transcribe(websocket: WebSocket):
         "status": "transcribing|done"
     }
     """
+    async def send_result(response: json):
+        try:
+            await websocket.send_json(response)
+        except Exception as e: 
+            await websocket.send_json({"error": str(e)})
+        print("Message sent")
+
+    def streaming_update(text: str):
+        # Get current transcription
+        print(f"Streaming update: {text}")
+        asyncio.run(send_result({"text": text, "language": "en", "status": "update"}))
+
+    def streaming_stablized(text: str):
+        # Get current transcription
+        print(f"Streaming stablized: {text}")
+        asyncio.run(send_result({"text": text, "language": "en", "status": "stable"}))
+
     await websocket.accept()
-    
-    recorder = AudioToTextRecorder(use_microphone=False, model="base")
+    recorder = AudioToTextRecorder(
+        use_microphone=False, model="base",
+        enable_realtime_transcription=True,
+        on_realtime_transcription_update=streaming_update,
+        on_realtime_transcription_stabilized=streaming_stablized)
+    recorder.start()
     
     try:
         while True:
@@ -215,14 +273,12 @@ async def websocket_stream_transcribe(websocket: WebSocket):
             state = data["state"]
             
             if state == "stop":
-                # Send final transcription and cleanup
-                final_text = recorder.text()
+                recorder.shutdown()
                 await websocket.send_json({
-                    "text": final_text,
-                    "language": model.detect_language(final_text) if final_text else "unknown",
+                    "text": None,
+                    "language": "en",
                     "status": "done"
                 })
-                recorder.shutdown()
                 break
                 
             # Decode base64 audio data
@@ -238,16 +294,7 @@ async def websocket_stream_transcribe(websocket: WebSocket):
                 
                 # Feed audio chunk to the recorder
                 recorder.feed_audio(pcm_data)
-                
-                # Get current transcription
-                current_text = recorder.text()
-                
-                # Send back the result
-                await websocket.send_json({
-                    "text": current_text,
-                    "language": model.detect_language(current_text) if current_text else "unknown",
-                    "status": "transcribing"
-                })
+                print("Successfully fed audio chunk to recorder")
                 
             except Exception as e:
                 await websocket.send_json({"error": str(e)})

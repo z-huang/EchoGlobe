@@ -8,6 +8,7 @@ from pydub import AudioSegment
 import io
 import time
 
+
 async def test_stream_transcribe(file_path, server_url, window_ms=2000):
     """
     Test the streaming transcription with audio chunks of specified window size
@@ -16,19 +17,10 @@ async def test_stream_transcribe(file_path, server_url, window_ms=2000):
         server_url: WebSocket server URL
         window_ms: Window size in milliseconds (default: 2000ms)
     """
-    async with websockets.connect(f'ws://{server_url}/ws/stream_transcribe') as websocket:
-        # Load audio file
-        audio = AudioSegment.from_file(file_path)
-        
-        # Calculate chunk size in milliseconds
-        chunk_duration = window_ms  # 2000ms = 2s
-        
-        # Process audio in chunks
-        for i in range(0, len(audio), chunk_duration):
-            # Extract chunk
-            chunk = audio[i:i + chunk_duration]
-            
-            # Export chunk to bytes (as webm)
+    async def send_chunks(websocket, chunks):
+        """Send all audio chunks"""
+        for i, chunk in enumerate(chunks):
+            # Export chunk to bytes
             chunk_data = io.BytesIO()
             chunk.export(chunk_data, format='webm')
             chunk_bytes = chunk_data.getvalue()
@@ -42,30 +34,61 @@ async def test_stream_transcribe(file_path, server_url, window_ms=2000):
                 "format": "webm",
                 "state": "start"
             }))
+            print(f"Sent chunk {i + 1}/{len(chunks)}")
             
-            # Get and print intermediate result
-            result = json.loads(await websocket.recv())
-            if "error" in result:
-                print(f"Error: {result['error']}")
-            else:
-                print("\nIntermediate Result:")
-                print(f"Text: {result['text']}")
-                print(f"Status: {result['status']}")
-                print(f"Language: {result['language']}")
+            # Add a small delay to allow receive task to process responses
+            await asyncio.sleep(0.1)
             
-            # Simulate real-time processing by waiting
-            await asyncio.sleep(chunk_duration / 1000)  # Convert ms to seconds
-        
         # Send stop signal
+        print("\nSending stop signal...")
         await websocket.send(json.dumps({
             "audio": "",
             "format": "webm",
             "state": "stop"
         }))
+
+    async def receive_responses(websocket):
+        """Receive and print responses until done"""
+        while True:
+            try:
+                # Use a short timeout to check for messages frequently
+                result = json.loads(await asyncio.wait_for(websocket.recv(), timeout=0.05))
+                print(f"Received result: {result}")
+                
+                if "error" in result:
+                    print(f"Error: {result['error']}")
+                    return result
+                    
+                print(f"\nStatus: {result['status']}")
+                if result['text']:
+                    print(f"Text: {result['text']}")
+                    
+                if result['status'] == "done":
+                    return result
+            except asyncio.TimeoutError:
+                continue
+            except Exception as e:
+                print(f"Error receiving response: {str(e)}")
+                return {"error": str(e)}
+
+    async with websockets.connect(f'ws://{server_url}/ws/stream_transcribe') as websocket:
+        # Load audio file
+        audio = AudioSegment.from_file(file_path)
         
-        # Get final result
-        final_result = json.loads(await websocket.recv())
-        return final_result
+        chunks = [
+            audio[i:i + window_ms]
+            for i in range(0, len(audio), window_ms)
+        ]
+        
+        # Create tasks for sending and receiving
+        send_task = asyncio.create_task(send_chunks(websocket, chunks))
+        receive_task = asyncio.create_task(receive_responses(websocket))
+        
+        # Wait for both tasks to complete
+        await asyncio.gather(send_task, receive_task)
+        
+        # Return the result from receive task
+        return receive_task.result()
 
 async def test_transcribe_socket(file_path, server_url):
     """Legacy function for non-streaming transcription"""

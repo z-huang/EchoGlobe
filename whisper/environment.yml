@@ -10,7 +10,6 @@ dependencies:
   - pytorch-cuda=12.1
   - torchaudio
   - pip
-  - ffmpeg
   - pip:
     - fastapi==0.109.2
     - uvicorn[standard]==0.27.1
@@ -30,3 +29,4 @@ dependencies:
     - openwakeword>=0.4.0
     - numpy<2.0.0
     - RealtimeSTT==0.3.104
+    - ipdb
