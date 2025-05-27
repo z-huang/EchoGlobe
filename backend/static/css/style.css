@@ -21,7 +21,25 @@ body {
     border-radius: 8px;
     overflow-y: auto;
 }
+/* Style for conversation links in the history panel */
+.history-list a {
+    display: block;
+    padding: 6px 10px;
+    color: #fff;
+    background: #40414F;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.98rem;
+    margin-bottom: 4px;
+    border: 1px solid #555;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
 
+.history-list a:hover {
+    background: #585a66;
+    color: #6ab0c4;
+    transform: scale(1.03);
+}
 /* Chat Panel */
 .chat-panel {
     position: relative; /* Ensure the chat-popup is positioned relative to this container */

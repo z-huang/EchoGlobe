@@ -14,7 +14,15 @@
     <!-- History Section -->
     <div class="history-panel">
         <h3>History</h3>
-        <!-- History content here -->
+        <ul class="history-list">
+            {% for conversation in conversations %}
+                <li>
+                    <a href="/converation/{{ conversation.slug }}">{{ conversation.title }}</a>
+                </li>
+            {% empty %}
+                <li>No conversations yet.</li>
+            {% endfor %}
+        </ul>
     </div>
 
     <!-- Chat Section -->
