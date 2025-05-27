@@ -14,6 +14,45 @@ import websockets
 from rest_framework.parsers import MultiPartParser, FormParser
 from Conversation.models import *
 
+@api_view(['POST'])
+def translate_view(request):
+    try:
+        text = request.data.get("text", "")
+        if not text:
+            return Response({"error": "Text is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        def translate_to(target_lang):
+            url = 'https://cts.m3.ntu.edu.tw/api/chat/completions'
+            headers = {
+                'Authorization': 'Bearer sk-d63d4c1d8d29403caef217b601bc9b25',
+                'Content-Type': 'application/json'
+            }
+            system_prompt = f"You are a translator. Translate the following text to {target_lang}. If they are the same language, return the original text. Do not output any other words."
+            data = {
+                "model": "llama3.1:8B",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": text}
+                ]
+            }
+            try:
+                resp = requests.post(url, headers=headers, json=data)
+                if resp.status_code == 200:
+                    return resp.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+                return f"API error: {resp.status_code}"
+            except Exception as e:
+                return f"Exception: {str(e)}"
+
+        translations = {
+            "en": translate_to("English"),
+            "cn": translate_to("Chinese"),
+            "de": translate_to("German"),
+            "jp": translate_to("Japanese"),
+        }
+        return Response(translations, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  # Only allow logged-in users
