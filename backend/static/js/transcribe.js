@@ -17,7 +17,7 @@ $(function () {
     let ws;
 
     function startWebSocket(meetingId) {
-        ws = new WebSocket(`ws://localhost:8000/ws/transcript/${meetingId}`);
+        ws = new WebSocket(`ws://localhost:8000/ws/transcript/`);
         ws.onopen = () => console.log('WebSocket connected.');
         ws.onmessage = (message) => {
             console.log('Received from server:', message.data);

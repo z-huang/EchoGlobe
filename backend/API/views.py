@@ -6,11 +6,6 @@ import requests
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from channels.generic.websocket import AsyncWebsocketConsumer
-import json
-from asgiref.sync import sync_to_async
-from channels.layers import get_channel_layer
-import websockets
 from rest_framework.parsers import MultiPartParser, FormParser
 from Conversation.models import *
 
@@ -104,40 +99,6 @@ def llama_chatbot(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class ProxyWebSocketConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.target_url = 'http://meow1.csie.ntu.edu.tw:9876/ws/transcribe'
-        if not self.target_url:
-            await self.close()
-            return
-
-        self.target_ws = await websockets.connect(self.target_url)
-        await self.accept()
-        self.receive_task = self.channel_layer.loop.create_task(
-            self.forward_from_target())
-
-    async def disconnect(self, close_code):
-        await self.target_ws.close()
-        self.receive_task.cancel()
-
-    async def receive(self, text_data=None, bytes_data=None):
-        if hasattr(self, 'target_ws'):
-            if text_data is not None:
-                await self.target_ws.send(text_data)
-            elif bytes_data is not None:
-                await self.target_ws.send(bytes_data)
-
-    async def forward_from_target(self):
-        try:
-            async for message in self.target_ws:
-                if isinstance(message, bytes):
-                    await self.send(bytes_data=message)
-                else:
-                    await self.send(text_data=message)
-        except Exception:
-            await self.close()
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def proxy_file_upload(request):
@@ -179,5 +140,31 @@ def proxy_file_upload(request):
             return Response({"error": f"Database error: {str(db_err)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(data, status=resp.status_code)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_conversation_sentences(request, conversation_id):
+    try:
+        conversation = Conversation.objects.get(id=conversation_id)
+        sentences = Sentence.objects.filter(
+            conversation=conversation).order_by('created_at')
+        result = [
+            {
+                "id": s.id,
+                "source_transcription": s.source_transcription,
+                "en_transcription": s.en_transcription,
+                "cn_transcription": s.cn_transcription,
+                "de_transcription": s.de_transcription,
+                "jp_transcription": s.jp_transcription,
+                "created_at": s.created_at
+            }
+            for s in sentences
+        ]
+        return Response(result, status=status.HTTP_200_OK)
+    except Conversation.DoesNotExist:
+        return Response({"error": "Conversation not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

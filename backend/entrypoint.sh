@@ -9,4 +9,5 @@ fi
 python manage.py createsuperuser --no-input
 
 # gunicorn --bind 0.0.0.0:8001 myproject.wsgi:application
-python manage.py runserver 0.0.0.0:8001
+uvicorn myproject.asgi:application --host 0.0.0.0 --port 8001
+# python manage.py runserver 0.0.0.0:8001
