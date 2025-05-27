@@ -362,8 +362,8 @@ body {
 
 .transcript-floating-header {
     position: absolute;
-    top: -29px;
-    right: 415px;
+    top: 205px;
+    right: 830px;
     background-color: #707176;
     padding: 6px 10px;
     border-radius: 6px;
