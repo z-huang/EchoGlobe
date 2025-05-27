@@ -1,34 +1,30 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const chatBtn = document.getElementById('chatBtn');
-    const chatPopup = document.getElementById('chatPopup');
-    const closeChatBtn = document.getElementById('closeChatBtn');
-    const chatInput = document.getElementById('chatInput');
-    const chatMessages = document.getElementById('chatMessages');
-    const sendChatBtn = document.getElementById('sendChatBtn');
-    const chatPanel = document.querySelector('.chat-panel');
+$(function () {
+    const $chatBtn = $('#chatBtn');
+    const $chatPopup = $('#chatPopup');
+    const $closeChatBtn = $('#closeChatBtn');
+    const $chatInput = $('#chatInput');
+    const $chatMessages = $('#chatMessages');
+    const $sendChatBtn = $('#sendChatBtn');
+    const $clearHistoryBtn = $('#clearHistoryBtn');
+
     // Clear chat history
-    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-    clearHistoryBtn.addEventListener('click', () => {
-        chatMessages.innerHTML = ''; // Clear all messages
+    $clearHistoryBtn.on('click', function () {
+        $chatMessages.empty();
     });
 
     // Toggle the chat popup when the "Chat" button is clicked
-    chatBtn.addEventListener('click', () => {
-        if (chatPopup.style.display === 'block') {
-            chatPopup.style.display = 'none';
-        } else {
-            chatPopup.style.display = 'block';
-        }
+    $chatBtn.on('click', function () {
+        $chatPopup.toggle();
     });
 
     // Hide the chat popup when the close button is clicked
-    closeChatBtn.addEventListener('click', () => {
-        chatPopup.style.display = 'none';
+    $closeChatBtn.on('click', function () {
+        $chatPopup.hide();
     });
 
     // Handle sending messages
-    sendChatBtn.addEventListener('click', async () => {
-        const message = chatInput.value.trim();
+    $sendChatBtn.on('click', async function () {
+        const message = $chatInput.val().trim();
         if (message) {
             // Display the user's message
             const userMessageElement = document.createElement('div');
@@ -44,18 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': getCSRFToken() // Include CSRF token if needed
+                        'X-CSRFToken': getCSRFToken()
                     },
                     body: JSON.stringify({
                         message: message,
-                        conversation_history: getConversationHistory(chatMessages)
+                        conversation_history: getConversationHistory($chatMessages)
                     })
                 });
-    
+
                 if (response.ok) {
                     const data = await response.json();
                     const botMessage = data.answer || "No response from the chatbot.";
-    
+
                     // Display the chatbot's response
                     const botMessageElement = document.createElement('div');
                     botMessageElement.innerHTML = marked.parse(`${botMessage}`); // Render Markdown
@@ -64,19 +60,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
                 } else {
                     console.error('Error:', response.statusText);
-                    displayErrorMessage(chatMessages, 'Failed to get a response from the server.');
+                    displayErrorMessage($chatMessages, 'Failed to get a response from the server.');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                displayErrorMessage(chatMessages, 'An error occurred while communicating with the server.');
+                displayErrorMessage($chatMessages, 'An error occurred while communicating with the server.');
             }
         }
     });
 
     // Allow pressing "Enter" to send messages
-    chatInput.addEventListener('keypress', (event) => {
+    $chatInput.on('keypress', function (event) {
         if (event.key === 'Enter') {
-            sendChatBtn.click();
+            $sendChatBtn.click();
         }
     });
 
@@ -93,23 +89,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Helper function to get conversation history
-    function getConversationHistory(chatMessages) {
+    function getConversationHistory($chatMessages) {
         const messages = [];
-        chatMessages.querySelectorAll('.user-message, .bot-message').forEach((messageElement) => {
+        $chatMessages.find('.user-message, .bot-message').each(function () {
             messages.push({
-                role: messageElement.className.includes('user-message') ? 'user' : 'assistant',
-                content: messageElement.textContent
+                role: $(this).hasClass('user-message') ? 'user' : 'assistant',
+                content: $(this).text()
             });
         });
         return messages;
     }
 
     // Helper function to display error messages
-    function displayErrorMessage(chatMessages, errorMessage) {
-        const errorElement = document.createElement('div');
-        errorElement.textContent = errorMessage;
-        errorElement.className = 'error-message';
-        chatMessages.appendChild(errorElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
+    function displayErrorMessage($chatMessages, errorMessage) {
+        const $errorElement = $('<div>')
+            .text(errorMessage)
+            .addClass('error-message');
+        $chatMessages.append($errorElement);
+        $chatMessages.scrollTop($chatMessages[0].scrollHeight);
     }
 });

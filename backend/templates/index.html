@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 {% endblock %}
 
 {% block title %}EchoGlobe{% endblock %}
@@ -101,7 +101,8 @@
             </div>
             <div class="chat-popup-messages" id="chatMessages"></div>
             <div class="chat-popup-input">
-                <input type="text" placeholder="Type your message..." data-i18n-placeholder="chat_placeholder" id="chatInput">
+                <input type="text" placeholder="Type your message..." data-i18n-placeholder="chat_placeholder"
+                    id="chatInput">
                 <button id="sendChatBtn" style="font-size: 20px">➤</button>
             </div>
         </div>
@@ -115,6 +116,9 @@
 </div>
 {% endblock %}
 {% block extra_js %}
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="{% static 'js/chatbox.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="{% static 'js/chatbox.js' %}"></script>
+<script src="{% static 'js/transcribe.js' %}"></script>
 {% endblock %}
