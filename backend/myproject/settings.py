@@ -26,8 +26,16 @@ SECRET_KEY = 'django-insecure-q8e4gkwhe0fbgfmeo#x)7u2bakvi5wx&5=c!_q#f4pl)rq$^hm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cts.m3.ntu.edu.tw']
-CSRF_TRUSTED_ORIGINS = ['http://cts.m3.ntu.edu.tw:8000']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'cts.m3.ntu.edu.tw',
+    '.orb.local'
+]
+CSRF_TRUSTED_ORIGINS = [
+    'http://cts.m3.ntu.edu.tw:8000',
+    'https://*.orb.local',  # OrbStack
+]
 
 # Application definition
 

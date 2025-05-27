@@ -8,4 +8,5 @@ fi
 
 python manage.py createsuperuser --no-input
 
-gunicorn --bind 0.0.0.0:8001 myproject.wsgi:application
+# gunicorn --bind 0.0.0.0:8001 myproject.wsgi:application
+python manage.py runserver 0.0.0.0:8001
