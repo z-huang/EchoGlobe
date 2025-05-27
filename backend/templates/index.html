@@ -67,18 +67,22 @@
         <div class="conversation-content">
             <h2>{{ content.title }}</h2>
             <div class="transcript-section">
-                <div class="source-transcript">
-                    <h3>Source Language Transcript</h3>
-                    <div id="sourceTranscript">
-                        <!-- Source transcript content will be dynamically loaded here -->
-                    </div>
-                </div>
-                <div class="target-transcript">
-                    <h3>Target Language Transcript</h3>
-                    <div id="targetTranscript">
-                        <!-- Target transcript content will be dynamically loaded here -->
-                    </div>
-                </div>
+            <div class="transcript-block">
+                <h4>English</h4>
+                <div id="enTranscript">{{ content.en_transcription|default:"No English transcript."|linebreaksbr }}</div>
+            </div>
+            <div class="transcript-block">
+                <h4>中文</h4>
+                <div id="cnTranscript">{{ content.cn_transcription|default:"暂无中文转录。"|linebreaksbr }}</div>
+            </div>
+            <div class="transcript-block">
+                <h4>Deutsch</h4>
+                <div id="deTranscript">{{ content.de_transcription|default:"Keine deutsche Transkription."|linebreaksbr }}</div>
+            </div>
+            <div class="transcript-block">
+                <h4>日本語</h4>
+                <div id="jpTranscript">{{ content.jp_transcription|default:"日本語の書き起こしはありません。"|linebreaksbr }}</div>
+            </div>
             </div>
         </div>
         {% else %}
