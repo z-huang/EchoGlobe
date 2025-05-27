@@ -31,7 +31,7 @@
     <!-- Chat Section -->
     <div class="chat-panel">
         <div class="prompt-container">
-            <h1 data-i18n="transcript">Transcript</h1>
+            <h1>{{ title }}</h1>
             <div class="action-buttons">
                 <button class="action-btn record-btn" id="startBtn">
                     <span class="btn-icon">●</span>
@@ -67,7 +67,6 @@
         <!-- Conversation Content Section -->
         {% if content %}
         <div class="conversation-content">
-            <h2>{{ content.title }}</h2>
             <div class="transcript-section">
                 <div class="transcript-block" data-lang="source">
                     <h4>Source</h4>

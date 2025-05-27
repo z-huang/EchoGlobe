@@ -12,4 +12,4 @@ def single_chat(request, slug):
     #     )
     #     conversations = [new_conv]
     chat_content = Conversation.objects.filter(slug=slug).first()
-    return render(request, 'index.html', {'conversations': conversations, 'content': chat_content})
+    return render(request, 'index.html', {'conversations': conversations, 'content': chat_content, 'title': chat_content.title})
