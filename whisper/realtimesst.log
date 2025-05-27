@@ -1,0 +1,6 @@
+2025-05-27 14:58:33.726 - RealTimeSTT: realtimestt - INFO - Starting RealTimeSTT
+2025-05-27 14:58:33.732 - RealTimeSTT: realtimestt - INFO - Initializing WebRTC voice with Sensitivity 3
+2025-05-27 14:58:33.732 - RealTimeSTT: realtimestt - DEBUG - WebRTC VAD voice activity detection engine initialized successfully
+2025-05-27 14:58:36.428 - RealTimeSTT: realtimestt - DEBUG - Silero VAD voice activity detection engine initialized successfully
+2025-05-27 14:58:36.430 - RealTimeSTT: realtimestt - DEBUG - Starting realtime worker
+2025-05-27 14:58:36.430 - RealTimeSTT: realtimestt - DEBUG - Waiting for main transcription model to start
