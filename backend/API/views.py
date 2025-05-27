@@ -14,6 +14,7 @@ import websockets
 from rest_framework.parsers import MultiPartParser, FormParser
 from Conversation.models import *
 
+
 @api_view(['POST'])
 def translate_view(request):
     try:
@@ -53,6 +54,7 @@ def translate_view(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  # Only allow logged-in users
@@ -115,10 +117,8 @@ class ProxyWebSocketConsumer(AsyncWebsocketConsumer):
             self.forward_from_target())
 
     async def disconnect(self, close_code):
-        if hasattr(self, 'target_ws'):
-            await self.target_ws.close()
-        if hasattr(self, 'receive_task'):
-            self.receive_task.cancel()
+        await self.target_ws.close()
+        self.receive_task.cancel()
 
     async def receive(self, text_data=None, bytes_data=None):
         if hasattr(self, 'target_ws'):
@@ -144,6 +144,10 @@ def proxy_file_upload(request):
     # Ensure the request uses the correct parsers
     parser_classes = (MultiPartParser, FormParser)
     file_obj = request.FILES.get('audio')
+    conversation_id = request.data.get('conversation_id')
+    if conversation_id is None:
+        return Response({"error": "No conversation id provided"}, status=status.HTTP_400_BAD_REQUEST)
+
     if not file_obj:
         return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -156,6 +160,24 @@ def proxy_file_upload(request):
             data = resp.json()
         except Exception as json_err:
             return Response({"error": "Invalid JSON response from target"}, status=status.HTTP_502_BAD_GATEWAY)
+
+        # Insert sentences into database
+        try:
+            conversation = Conversation.objects.get(id=conversation_id)
+            for sentence in data:
+                Sentence.objects.create(
+                    conversation=conversation,
+                    source_transcription=sentence['source_transcription'],
+                    en_transcription=sentence['en_transcription'],
+                    cn_transcription=sentence['cn_transcription'],
+                    de_transcription=sentence['de_transcription'],
+                    jp_transcription=sentence['jp_transcription'],
+                )
+        except Conversation.DoesNotExist:
+            return Response({"error": "Conversation not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as db_err:
+            return Response({"error": f"Database error: {str(db_err)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         return Response(data, status=resp.status_code)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
