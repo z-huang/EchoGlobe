@@ -108,4 +108,7 @@ $(function () {
         $chatMessages.append($errorElement);
         $chatMessages.scrollTop($chatMessages[0].scrollHeight);
     }
+    $('#newChatBtn').on('click', function () {
+        window.location.href = '/';
+    });
 });
