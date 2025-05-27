@@ -20,10 +20,10 @@ def single_chat(request, slug):
                 )
                 if resp.status_code == 200:
                     translations = resp.json()
-                    chat_content.en_translation = translations.get("en", "")
-                    chat_content.cn_translation = translations.get("cn", "")
-                    chat_content.de_translation = translations.get("de", "")
-                    chat_content.jp_translation = translations.get("jp", "")
+                    chat_content.en_transcription = translations.get("en", "")
+                    chat_content.cn_transcription = translations.get("cn", "")
+                    chat_content.de_transcription = translations.get("de", "")
+                    chat_content.jp_transcription = translations.get("jp", "")
             except Exception as e:
                 # Optionally log the error or handle it as needed
                 pass

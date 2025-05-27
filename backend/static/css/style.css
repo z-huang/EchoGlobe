@@ -503,3 +503,101 @@ body {
     background-color: #c9302c; /* Darker red on hover */
     transform: scale(1.05); /* Slight zoom effect on hover */
 }
+/* Pencil (edit) button styling */
+.edit-transcript-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    vertical-align: middle;
+}
+
+.edit-transcript-btn:hover,
+.edit-transcript-btn:focus {
+    background: #40414F;
+    color: #6ab0c4;
+    outline: none;
+    transform: scale(1.1);
+}
+
+/* Transcript Edit Form Styling */
+#editSourceForm {
+    background: #23232a;
+    border: 1.5px solid #444;
+    border-radius: 8px;
+    padding: 16px 14px 12px 14px;
+    margin-top: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#editSourceForm textarea {
+    width: 100%;
+    max-width: 100%;   /* Prevent overflow */
+    min-width: 0;      /* Allow shrinking if needed */
+    box-sizing: border-box; /* Include padding and border in width */
+    min-height: 80px;
+    resize: vertical;
+    border: 1.5px solid #555;
+    border-radius: 6px;
+    background: #2c2d31;
+    color: #fff;
+    font-size: 1rem;
+    padding: 10px 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
+
+#editSourceForm textarea:focus {
+    border-color: #6ab0c4;
+    box-shadow: 0 0 0 2px #6ab0c455;
+}
+
+#editSourceForm button[type="submit"] {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#editSourceForm button[type="submit"],
+#editSourceForm button[type="button"] {
+    background: #40414F;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    margin-right: 8px;
+    min-width: 90px; /* Ensures both buttons have the same minimum width */
+    box-sizing: border-box;
+}
+
+#editSourceForm button[type="submit"] {
+    background: #007bff;
+}
+
+#editSourceForm button[type="submit"]:hover {
+    background: #0056b3;
+    transform: scale(1.04);
+}
+
+#editSourceForm button[type="button"]:hover {
+    background: #585a66;
+    transform: scale(1.04);
+}
