@@ -3,6 +3,7 @@ uvicorn[standard]==0.27.1
 python-multipart==0.0.9
 openai-whisper==20231117
 torch==2.2.0
+torchaudio
 numpy==1.26.4
 pydub==0.25.1
 python-dotenv==1.0.1
@@ -17,3 +18,5 @@ websocket-client==1.8.0
 openwakeword>=0.4.0
 numpy<2.0.0
 RealtimeSTT==0.3.104
+googletrans==4.0.2
+ipdb

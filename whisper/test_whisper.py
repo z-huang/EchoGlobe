@@ -7,7 +7,7 @@ from pathlib import Path
 from pydub import AudioSegment
 import io
 import time
-
+import requests
 
 async def test_stream_transcribe(file_path, server_url, window_ms=2000):
     """

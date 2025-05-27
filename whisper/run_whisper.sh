@@ -19,6 +19,6 @@ fi
 
 # Run the Whisper service
 echo "Starting Whisper service..."
-python main.py --port 9876
+python main.py --port 9870
 
 let the hosted whisper be port forwarded to the same port of given address

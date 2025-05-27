@@ -12,6 +12,7 @@ import base64
 from RealtimeSTT import AudioToTextRecorder
 import ffmpeg
 import asyncio
+from googletrans import Translator
 
 app = FastAPI()
 
@@ -234,22 +235,38 @@ async def websocket_stream_transcribe(websocket: WebSocket):
         "status": "transcribing|done"
     }
     """
-    async def send_result(response: json):
-        try:
-            await websocket.send_json(response)
-        except Exception as e: 
-            await websocket.send_json({"error": str(e)})
-        print("Message sent")
+    async def send_result(text: str, msg_type: str):
+        async with Translator() as translator:
+            english = await translator.translate(text, dest='en')
+            chinese = await translator.translate(text, dest='zh')
+            japanese = await translator.translate(text, dest='ja')
+            german = await translator.translate(text, dest='de')
+
+            response = {
+                "text": text,
+                "english": english.text,
+                "chinese": chinese.text,
+                "japanese": japanese.text,
+                "german": german.text,
+                "status": msg_type
+            }
+
+            try:
+                await websocket.send_json(response)
+                print("Message sent")
+            except Exception as e:
+                await websocket.send_json({"error": str(e)})
+
 
     def streaming_update(text: str):
         # Get current transcription
         print(f"Streaming update: {text}")
-        asyncio.run(send_result({"text": text, "language": "en", "status": "update"}))
+        asyncio.run(send_result(text, "update"))
 
     def streaming_stablized(text: str):
         # Get current transcription
         print(f"Streaming stablized: {text}")
-        asyncio.run(send_result({"text": text, "language": "en", "status": "stable"}))
+        asyncio.run(send_result(text, "stablized"))
 
     await websocket.accept()
     recorder = AudioToTextRecorder(
@@ -274,11 +291,7 @@ async def websocket_stream_transcribe(websocket: WebSocket):
             
             if state == "stop":
                 recorder.shutdown()
-                await websocket.send_json({
-                    "text": None,
-                    "language": "en",
-                    "status": "done"
-                })
+                await websocket.send_json({ "status": "done" })
                 break
                 
             # Decode base64 audio data
