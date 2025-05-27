@@ -10,7 +10,6 @@ class Conversation(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='conversations')
     title = models.CharField(max_length=255)
-    src_language = models.CharField(max_length=10, help_text="Original language code, e.g., 'en', 'es'")
     media_url = models.URLField(help_text="URL to the media file (stored externally)")
     created_at = models.DateTimeField(auto_now_add=True)
     source_transcription = models.TextField(blank=True, help_text="Transcription of the original media")
