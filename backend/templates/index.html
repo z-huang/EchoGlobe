@@ -69,22 +69,29 @@
         <div class="prompt-container">
             <div class="transcript-section">
                 <div class="transcript-block" data-lang="source">
+            
+                <!-- 小方塊 header -->
+                <div class="transcript-floating-header">
                     <h4>
-                        Source
-                        <button id="editSourceBtn" class="edit-transcript-btn" title="Edit Source">
-                            ✏️
-                        </button>
+                    Source
+                    <button id="editSourceBtn" class="edit-transcript-btn" title="Edit Source">✏️</button>
                     </h4>
-                    <div id="sourceTranscript">{{ content.source_transcription|default:"No source transcript available."|linebreaksbr }}</div>
-                    <form id="editSourceForm" method="POST" action="" style="display:none; margin-top:10px;">
-                        {% csrf_token %}
-                        <textarea name="source_transcription" id="editSourceTextarea" style="width:100%;min-height:80px;">{{ content.source_transcription|default:"" }}</textarea>
-                        <button type="submit" style="margin-top:8px;">Save</button>
-                        <button type="button" id="cancelEditSourceBtn" style="margin-top:8px;">Cancel</button>
-                    </form>
+                </div>
+            
+                <div id="sourceTranscript">{{ content.source_transcription|default:"No source transcript available."|linebreaksbr }}</div>
+            
+                <form id="editSourceForm" method="POST" action="" style="display:none; margin-top:10px;">
+                    {% csrf_token %}
+                    <textarea name="source_transcription" id="editSourceTextarea" style="width:100%;min-height:80px;">{{ content.source_transcription|default:"" }}</textarea>
+                    <button type="submit" style="margin-top:8px;">Save</button>
+                    <button type="button" id="cancelEditSourceBtn" style="margin-top:8px;">Cancel</button>
+                </form>
+            
                 </div>
             </div>
         </div>
+          
+        
         <div class="chat-container">
             <div class="transcript-section">
                 <div class="transcript-block" data-lang="en">

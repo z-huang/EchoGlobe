@@ -356,6 +356,43 @@ body {
     color: #6ab0c4;
 }
 
+.transcript-block {
+    position: relative; /* 為絕對定位的小方塊提供參考基準 */
+}
+
+.transcript-floating-header {
+    position: absolute;
+    top: -29px;
+    right: 415px;
+    background-color: #707176;
+    padding: 6px 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.transcript-floating-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+}
+
+.edit-transcript-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.edit-transcript-btn:hover {
+    color: #6ab0c4;
+}
+
 .chat-container .dropdown-content a:hover {
     background-color: #383942;
     color: #6ab0c4;
