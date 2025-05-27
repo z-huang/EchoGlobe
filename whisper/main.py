@@ -10,6 +10,7 @@ from pydub import AudioSegment
 import torch
 import json
 import base64
+from RealtimeSTT import AudioToTextRecorder
 
 app = FastAPI()
 
@@ -166,6 +167,108 @@ async def websocket_transcribe(websocket: WebSocket):
         except:
             pass
 
+def convert_to_pcm(audio_data: bytes, source_format: str = "webm") -> bytes:
+    """Convert audio data to PCM format"""
+    with tempfile.NamedTemporaryFile(suffix=f".{source_format}") as temp_audio:
+        temp_audio.write(audio_data)
+        temp_audio.flush()
+        
+        # Load audio using pydub
+        audio = AudioSegment.from_file(temp_audio.name, format=source_format)
+        
+        # Convert to PCM format
+        pcm_data = io.BytesIO()
+        # Export as WAV without header (raw PCM)
+        audio.export(pcm_data, format="raw", codec="pcm_s16le", parameters=["-ar", "16000", "-ac", "1", "-f", "s16le"])
+        return pcm_data.getvalue()
+
+@app.websocket("/ws/stream_transcribe")
+async def websocket_stream_transcribe(websocket: WebSocket):
+    """
+    WebSocket endpoint for real-time streaming transcription
+    Expected message format: {
+        "audio": "base64_encoded_audio_data",
+        "format": "webm",
+        "state": "start|stop"
+    }
+    Response format: {
+        "text": "transcribed_text",
+        "language": "detected_language",
+        "status": "transcribing|done"
+    }
+    """
+    await websocket.accept()
+    
+    recorder = AudioToTextRecorder(use_microphone=False, model="base")
+    
+    try:
+        while True:
+            # Receive JSON data
+            data = await websocket.receive_json()
+            
+            if not isinstance(data, dict) or "audio" not in data or "format" not in data or "state" not in data:
+                await websocket.send_json({
+                    "error": "Invalid message format. Expected: {audio: string, format: string, state: string}"
+                })
+                continue
+            
+            state = data["state"]
+            
+            if state == "stop":
+                # Send final transcription and cleanup
+                final_text = recorder.text()
+                await websocket.send_json({
+                    "text": final_text,
+                    "language": model.detect_language(final_text) if final_text else "unknown",
+                    "status": "done"
+                })
+                recorder.shutdown()
+                break
+                
+            # Decode base64 audio data
+            try:
+                audio_data = base64.b64decode(data["audio"])
+            except Exception as e:
+                await websocket.send_json({"error": f"Invalid base64 audio data: {str(e)}"})
+                continue
+            
+            try:
+                # Convert to PCM format
+                pcm_data = convert_to_pcm(audio_data, data["format"])
+                
+                # Feed audio chunk to the recorder
+                recorder.feed_audio(pcm_data)
+                
+                # Get current transcription
+                current_text = recorder.text()
+                
+                # Send back the result
+                await websocket.send_json({
+                    "text": current_text,
+                    "language": model.detect_language(current_text) if current_text else "unknown",
+                    "status": "transcribing"
+                })
+                
+            except Exception as e:
+                await websocket.send_json({"error": str(e)})
+                
+    except WebSocketDisconnect:
+        print("Client disconnected")
+        recorder.shutdown()
+    except Exception as e:
+        print(f"WebSocket error: {str(e)}")
+        try:
+            await websocket.send_json({"error": str(e)})
+        except:
+            pass
+        finally:
+            recorder.shutdown()
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=9876) 
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Run Whisper transcription server')
+    parser.add_argument('--port', type=int, default=9876, help='Port to run the server on')
+    args = parser.parse_args()
+    uvicorn.run(app, host="0.0.0.0", port=args.port) 
