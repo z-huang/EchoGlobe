@@ -109,6 +109,6 @@ $(function () {
         $chatMessages.scrollTop($chatMessages[0].scrollHeight);
     }
     $('#newChatBtn').on('click', function () {
-        window.location.href = '/';
+        window.location.href = '/conversation/new_conversation';
     });
 });

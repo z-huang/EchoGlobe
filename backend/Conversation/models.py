@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from django.utils import timezone
+
 
 User = get_user_model()
 
@@ -19,7 +21,9 @@ class Conversation(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(f"{self.title}-{self.creator.id}-{self.created_at.timestamp()}")
+            # Use current time if created_at is None
+            timestamp = self.created_at.timestamp() if self.created_at else timezone.now().timestamp()
+            self.slug = slugify(f"{self.title}-{self.creator.id}-{timestamp}")
         super().save(*args, **kwargs)
 
     def __str__(self):

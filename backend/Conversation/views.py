@@ -1,7 +1,33 @@
 from django.shortcuts import render, redirect
 from Conversation.models import Conversation  # Import the model
 import requests
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 
+@login_required
+def new_conversation(request):
+    if request.method == "GET":
+        # You can customize these defaults as needed
+        default_title = "New Conversation"
+        default_src_language = "en"
+        default_media_url = "https://example.com/media.mp3"
+        default_source_text = "This is a default source transcription."
+
+        conversation = Conversation.objects.create(
+            creator=request.user,
+            title=default_title,
+            src_language=default_src_language,
+            media_url=default_media_url,
+            source_transcription=default_source_text,
+        )
+        conversation.save()
+        return redirect(f'/conversation/{conversation.slug}')
+    else:
+        # Optionally render a form or just redirect
+        return HttpResponse("Create a new conversation here.")
+    
+    
+@login_required
 def single_chat(request, slug):
     conversations = Conversation.objects.filter(creator=request.user)
     chat_content = Conversation.objects.filter(slug=slug).first()
