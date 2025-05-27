@@ -11,6 +11,7 @@ class Conversation(models.Model):
     src_language = models.CharField(max_length=10, help_text="Original language code, e.g., 'en', 'es'")
     media_url = models.URLField(help_text="URL to the media file (stored externally)")
     created_at = models.DateTimeField(auto_now_add=True)
+    source_transcription = models.TextField(blank=True, help_text="Transcription of the original media")
     en_transcription = models.TextField(blank=True, help_text="English transcription of the media")
     cn_transcription = models.TextField(blank=True, help_text="Chinese transcription of the media")
     de_transcription = models.TextField(blank=True, help_text="German transcription of the media")

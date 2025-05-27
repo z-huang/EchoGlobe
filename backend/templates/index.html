@@ -49,10 +49,11 @@
                         中文
                     </button>
                     <div class="dropdown-content">
-                        <a href="#" data-lang="cmn-Hant-TW" class="active">中文</a>
-                        <a href="#" data-lang="en-US">English</a>
-                        <a href="#" data-lang="ja-JP">日本語</a>
-                        <a href="#" data-lang="de-DE">Deutsch</a>
+                        <a href="#" data-lang="source" class="active">Source</a>
+                        <a href="#" data-lang="en">English</a>
+                        <a href="#" data-lang="cn">中文</a>
+                        <a href="#" data-lang="de">Deutsch</a>
+                        <a href="#" data-lang="jp">日本語</a>
                     </div>
                 </div>
                 <button class="action-btn new-chat-btn" id="newChatBtn">
@@ -67,22 +68,26 @@
         <div class="conversation-content">
             <h2>{{ content.title }}</h2>
             <div class="transcript-section">
-            <div class="transcript-block">
-                <h4>English</h4>
-                <div id="enTranscript">{{ content.en_transcription|default:"No English transcript."|linebreaksbr }}</div>
-            </div>
-            <div class="transcript-block">
-                <h4>中文</h4>
-                <div id="cnTranscript">{{ content.cn_transcription|default:"暂无中文转录。"|linebreaksbr }}</div>
-            </div>
-            <div class="transcript-block">
-                <h4>Deutsch</h4>
-                <div id="deTranscript">{{ content.de_transcription|default:"Keine deutsche Transkription."|linebreaksbr }}</div>
-            </div>
-            <div class="transcript-block">
-                <h4>日本語</h4>
-                <div id="jpTranscript">{{ content.jp_transcription|default:"日本語の書き起こしはありません。"|linebreaksbr }}</div>
-            </div>
+                <div class="transcript-block" data-lang="source">
+                    <h4>Source</h4>
+                    <div id="sourceTranscript">{{ content.source_transcription|default:"No source transcript available."|linebreaksbr }}</div>
+                </div>
+                <div class="transcript-block" data-lang="en">
+                    <h4>English</h4>
+                    <div id="enTranscript">{{ content.en_transcription|default:"No English transcript."|linebreaksbr }}</div>
+                </div>
+                <div class="transcript-block" data-lang="cn">
+                    <h4>中文</h4>
+                    <div id="cnTranscript">{{ content.cn_transcription|default:"暂无中文转录。"|linebreaksbr }}</div>
+                </div>
+                <div class="transcript-block" data-lang="de">
+                    <h4>Deutsch</h4>
+                    <div id="deTranscript">{{ content.de_transcription|default:"Keine deutsche Transkription."|linebreaksbr }}</div>
+                </div>
+                <div class="transcript-block" data-lang="jp">
+                    <h4>日本語</h4>
+                    <div id="jpTranscript">{{ content.jp_transcription|default:"日本語の書き起こしはありません。"|linebreaksbr }}</div>
+                </div>
             </div>
         </div>
         {% else %}
