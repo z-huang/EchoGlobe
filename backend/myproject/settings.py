@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'User',
     'API',
     'rest_framework',
+    'Conversation',
 ]
 
 MIDDLEWARE = [
