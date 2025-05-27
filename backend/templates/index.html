@@ -9,19 +9,20 @@
 
 {% block content %}
 
-
 <div class="main-container">
     <!-- History Section -->
     <div class="history-panel">
         <h3>History</h3>
         <ul class="history-list">
-            {% for conversation in conversations %}
-                <li>
-                    <a href="/converation/{{ conversation.slug }}">{{ conversation.title }}</a>
-                </li>
-            {% empty %}
+            {% if conversations %}
+                {% for conversation in conversations %}
+                    <li>
+                        <a href="/conversation/{{ conversation.slug }}">{{ conversation.title }}</a>
+                    </li>
+                {% endfor %}
+            {% else %}
                 <li>No conversations yet.</li>
-            {% endfor %}
+            {% endif %}
         </ul>
     </div>
 
@@ -60,6 +61,31 @@
                 </button>
             </div>
         </div>
+
+        <!-- Conversation Content Section -->
+        {% if content %}
+        <div class="conversation-content">
+            <h2>{{ content.title }}</h2>
+            <div class="transcript-block">
+                <h4>English</h4>
+                <p>{{ content.en_transcription|default:"No English transcript." }}</p>
+            </div>
+            <div class="transcript-block">
+                <h4>中文</h4>
+                <p>{{ content.cn_transcription|default:"暂无中文转录。" }}</p>
+            </div>
+            <div class="transcript-block">
+                <h4>日本語</h4>
+                <p>{{ content.jp_transcription|default:"日本語の書き起こしはありません。" }}</p>
+            </div>
+            <div class="transcript-block">
+                <h4>Deutsch</h4>
+                <p>{{ content.de_transcription|default:"Keine deutsche Transkription." }}</p>
+            </div>
+        </div>
+        {% else %}
+            <p>No conversation selected.</p>
+        {% endif %}
 
         <div id="transcriptArea" class="transcript-area" style="display: none;">
             <!-- Dynamic transcript content -->
