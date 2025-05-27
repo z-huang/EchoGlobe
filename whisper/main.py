@@ -13,6 +13,7 @@ from RealtimeSTT import AudioToTextRecorder
 import ffmpeg
 import asyncio
 from googletrans import Translator
+from pydub import AudioSegment
 
 app = FastAPI()
 
@@ -40,7 +41,6 @@ def process_audio(audio_data: bytes, source_format: str = "webm") -> np.ndarray:
         temp_audio.flush()
         
         # Load audio using pydub
-        from pydub import AudioSegment
         audio = AudioSegment.from_file(temp_audio.name, format=source_format)
         
         # Convert to WAV format if needed
@@ -246,26 +246,27 @@ async def websocket_stream_transcribe(websocket: WebSocket):
     }
     """
     async def send_result(text: str, msg_type: str):
-        async with Translator() as translator:
-            english = await translator.translate(text, dest='en')
-            chinese = await translator.translate(text, dest='zh')
-            japanese = await translator.translate(text, dest='ja')
-            german = await translator.translate(text, dest='de')
+        if len(text) > 0:
+            async with Translator() as translator:
+                english = await translator.translate(text, dest='en')
+                chinese = await translator.translate(text, dest='zh')
+                japanese = await translator.translate(text, dest='ja')
+                german = await translator.translate(text, dest='de')
 
-            response = {
-                "text": text,
-                "english": english.text,
-                "chinese": chinese.text,
-                "japanese": japanese.text,
-                "german": german.text,
-                "status": msg_type
-            }
+                response = {
+                    "text": text,
+                    "english": english.text,
+                    "chinese": chinese.text,
+                    "japanese": japanese.text,
+                    "german": german.text,
+                    "status": msg_type
+                }
 
-            try:
-                await websocket.send_json(response)
-                print("Message sent")
-            except Exception as e:
-                await websocket.send_json({"error": str(e)})
+                try:
+                    await websocket.send_json(response)
+                    print("Message sent")
+                except Exception as e:
+                    await websocket.send_json({"error": str(e)})
 
 
     def streaming_update(text: str):
@@ -280,12 +281,17 @@ async def websocket_stream_transcribe(websocket: WebSocket):
 
     await websocket.accept()
     recorder = AudioToTextRecorder(
-        use_microphone=False, model="base",
+        use_microphone=False, realtime_model_type="base", model="base",
         enable_realtime_transcription=True,
         on_realtime_transcription_update=streaming_update,
-        on_realtime_transcription_stabilized=streaming_stablized)
+        on_realtime_transcription_stabilized=streaming_stablized,
+        compute_type="float32",
+        spinner=False,
+        )
     recorder.start()
-    
+    audio_data = b''
+    processed_time = 0
+    WIN_SIZE = 2000
     try:
         while True:
             # Receive JSON data
@@ -306,17 +312,39 @@ async def websocket_stream_transcribe(websocket: WebSocket):
                 
             # Decode base64 audio data
             try:
-                audio_data = base64.b64decode(data["audio"])
+                audio = base64.b64decode(data["audio"])
             except Exception as e:
                 await websocket.send_json({"error": f"Invalid base64 audio data: {str(e)}"})
                 continue
             
             try:
                 # Convert to PCM format
-                pcm_data = convert_to_pcm(audio_data, data["format"])
+                if data["format"] == "zion":
+                    audio_data += audio
+                    audio_segment = AudioSegment.from_file(io.BytesIO(audio_data), format="webm")
+
+                    while len(audio_segment) - processed_time > WIN_SIZE:
+                        print('here')
+                        # Save audio segment for debugging
+                        segment_to_process = audio_segment[processed_time:processed_time+WIN_SIZE]
+                        #debug_filename = f"debug_segment_{int(time.time())}.wav"
+                        #segment_to_process.export(debug_filename, format="wav")
+                        #print(f"Saved debug audio segment to {debug_filename}")
+                        
+                        segment_to_process.export('temp.pcm', format='s16le', bitrate='16k')
+                        with open('temp.pcm', 'rb') as f:
+                            pcm_data = f.read()
+                        processed_time = processed_time + WIN_SIZE
+                        recorder.feed_audio(pcm_data)
+                    
+                elif data["format"] == "pcm":
+                    pcm_data = audio
+                    recorder.feed_audio(pcm_data)
+                else:
+                    pcm_data = convert_to_pcm(audio, data["format"])
+                    recorder.feed_audio(pcm_data)
                 
                 # Feed audio chunk to the recorder
-                recorder.feed_audio(pcm_data)
                 print("Successfully fed audio chunk to recorder")
                 
             except Exception as e:

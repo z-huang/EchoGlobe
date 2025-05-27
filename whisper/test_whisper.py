@@ -19,7 +19,7 @@ async def test_stream_transcribe(file_path, server_url, window_ms=2000):
     """
     # Ensure URL has protocol for WebSocket
     if not server_url.startswith(('ws://', 'wss://')):
-        server_url = f"ws://{server_url}"
+        server_url = f"ws://{server_url}/ws/stream_transcribe"
 
     async def send_chunks(websocket, chunks):
         """Send all audio chunks"""
