@@ -45,7 +45,7 @@ def translate_view(request):
 
         translations = {
             "en": translate_to("English"),
-            "cn": translate_to("Chinese"),
+            "cn": translate_to("Traditional Chinese"),
             "de": translate_to("German"),
             "jp": translate_to("Japanese"),
         }
