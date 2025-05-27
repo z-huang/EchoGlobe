@@ -4,10 +4,12 @@ import tempfile
 from typing import Optional
 import whisper
 import numpy as np
-from fastapi import FastAPI, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydub import AudioSegment
 import torch
+import json
+import base64
 
 app = FastAPI()
 
@@ -90,6 +92,80 @@ async def transcribe_audio(audio: UploadFile):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.websocket("/ws/transcribe")
+async def websocket_transcribe(websocket: WebSocket):
+    """
+    WebSocket endpoint for real-time audio transcription
+    Expected message format: {
+        "audio_data": "base64_encoded_audio_data",
+        "format": "wav|mp3|webm|m4a|ogg"
+    }
+    """
+    await websocket.accept()
+    
+    try:
+        while True:
+            # Receive JSON data
+            data = await websocket.receive_json()
+            
+            if not isinstance(data, dict) or "audio_data" not in data or "format" not in data:
+                await websocket.send_json({
+                    "error": "Invalid message format. Expected: {audio_data: string, format: string}"
+                })
+                continue
+                
+            # Decode base64 audio data
+            try:
+                audio_data = base64.b64decode(data["audio_data"])
+            except Exception as e:
+                await websocket.send_json({"error": f"Invalid base64 audio data: {str(e)}"})
+                continue
+                
+            source_format = data["format"]
+            if source_format is None: 
+                source_format = "wav"
+            if source_format not in ["wav", "mp3", "webm", "m4a", "ogg"]:
+                await websocket.send_json({
+                    "error": "Unsupported audio format. Supported formats: wav, mp3, webm, m4a, ogg"
+                })
+                continue
+            
+            try:
+                # Process audio to correct format
+                audio_array = process_audio(audio_data, source_format)
+                
+                # Transcribe using Whisper
+                result = model.transcribe(
+                    audio_array,
+                    language=None,
+                    task=os.getenv("WHISPER_TASK", "transcribe"),
+                    fp16=torch.cuda.is_available()
+                )
+                
+                # Calculate confidence
+                confidence = 1.0
+                if hasattr(result, "segments") and result.segments:
+                    confidence = sum(seg.get("confidence", 1.0) for seg in result.segments) / len(result.segments)
+                
+                # Send back the result
+                await websocket.send_json({
+                    "text": result["text"].strip(),
+                    "confidence": float(confidence),
+                    "language": result["language"]
+                })
+                
+            except Exception as e:
+                await websocket.send_json({"error": str(e)})
+                
+    except WebSocketDisconnect:
+        print("Client disconnected")
+    except Exception as e:
+        print(f"WebSocket error: {str(e)}")
+        try:
+            await websocket.send_json({"error": str(e)})
+        except:
+            pass
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=9877) 
+    uvicorn.run(app, host="0.0.0.0", port=9876) 
