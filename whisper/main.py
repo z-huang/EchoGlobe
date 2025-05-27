@@ -86,12 +86,22 @@ async def transcribe_audio(audio: UploadFile):
         if hasattr(result, "segments") and result.segments:
             # Average confidence across segments
             confidence = sum(seg.get("confidence", 1.0) for seg in result.segments) / len(result.segments)
-        
-        return {
-            "text": result["text"].strip(),
-            "confidence": float(confidence),
-            "language": result["language"]
-        }
+        text = result["text"].strip()
+        print(text)
+        async with Translator() as translator:
+            english = await translator.translate(text, dest='en')
+            chinese = await translator.translate(text, dest='zh')
+            japanese = await translator.translate(text, dest='ja')
+            german = await translator.translate(text, dest='de')
+
+            return {
+                "text": text,
+                "english": english.text,
+                "chinese": chinese.text,
+                "japanese": japanese.text,
+                "german": german.text,
+            }
+
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

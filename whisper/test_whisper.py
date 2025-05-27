@@ -7,7 +7,7 @@ from pathlib import Path
 from pydub import AudioSegment
 import io
 import time
-import requests
+import aiohttp
 
 async def test_stream_transcribe(file_path, server_url, window_ms=2000):
     """
@@ -17,6 +17,10 @@ async def test_stream_transcribe(file_path, server_url, window_ms=2000):
         server_url: WebSocket server URL
         window_ms: Window size in milliseconds (default: 2000ms)
     """
+    # Ensure URL has protocol for WebSocket
+    if not server_url.startswith(('ws://', 'wss://')):
+        server_url = f"ws://{server_url}"
+
     async def send_chunks(websocket, chunks):
         """Send all audio chunks"""
         for i, chunk in enumerate(chunks):
@@ -71,7 +75,7 @@ async def test_stream_transcribe(file_path, server_url, window_ms=2000):
                 print(f"Error receiving response: {str(e)}")
                 return {"error": str(e)}
 
-    async with websockets.connect(f'ws://{server_url}/ws/stream_transcribe') as websocket:
+    async with websockets.connect(server_url) as websocket:
         # Load audio file
         audio = AudioSegment.from_file(file_path)
         
@@ -107,7 +111,7 @@ async def test_transcribe_socket(file_path, server_url):
         result = json.loads(await websocket.recv())
         return result
 
-def test_transcribe(file_path: str, server_url: str = "http://localhost:9000"):
+async def test_transcribe(file_path: str, server_url: str = "http://localhost:9876"):
     """Test the Whisper transcription service with an audio file"""
     
     # Check if file exists
@@ -121,25 +125,36 @@ def test_transcribe(file_path: str, server_url: str = "http://localhost:9000"):
         print(f"Error: Unsupported format {file_format}. Supported formats: wav, mp3, webm, m4a, ogg")
         return
     
+    # Ensure URL has protocol
+    if not server_url.startswith(('http://', 'https://')):
+        server_url = f"http://{server_url}"
+    
     try:
         # Open and send the file
-        with open(file_path, 'rb') as f:
-            files = {'audio': (Path(file_path).name, f, f'audio/{file_format}')}
-            print(f"Sending file to {server_url}/transcribe...")
-            
-            response = requests.post(f"{server_url}/transcribe", files=files)
-            response.raise_for_status()
-            
-            result = response.json()
-            print("\nTranscription Result:")
-            print("-" * 50)
-            print(f"Text: {result['text']}")
-            print(f"Confidence: {result['confidence']:.2f}")
-            
-    except requests.RequestException as e:
+        async with aiohttp.ClientSession() as session:
+            with open(file_path, 'rb') as f:
+                data = aiohttp.FormData()
+                data.add_field('audio',
+                             f,
+                             filename=Path(file_path).name,
+                             content_type=f'audio/{file_format}')
+                
+                print(f"Sending file to {server_url}/transcribe...")
+                async with session.post(f"{server_url}/transcribe", data=data) as response:
+                    response.raise_for_status()
+                    result = await response.json()
+                    
+                    print("\nTranscription Result:")
+                    print("-" * 50)
+                    print(f"Text: {result['text']}")
+                    print(f"English: {result['english']}")
+                    print(f"Chinese: {result['chinese']}")
+                    print(f"Japanese: {result['japanese']}")
+                    print(f"German: {result['german']}")
+                    
+    except aiohttp.ClientError as e:
         print(f"Error making request: {e}")
-        if hasattr(e.response, 'text'):
-            print(f"Server response: {e.response.text}")
+        print(f"Full URL attempted: {server_url}/transcribe")
     except Exception as e:
         print(f"Error: {e}")
 
@@ -161,16 +176,4 @@ if __name__ == "__main__":
         result = asyncio.run(test_stream_transcribe(args.file, args.url, args.window))
     else:
         print("Testing regular transcription...")
-        result = asyncio.run(test_transcribe_socket(args.file, args.url))
-    
-    if "error" in result:
-        print(f"Error: {result['error']}")
-    else:
-        print("\nFinal Result:")
-        print("-" * 50)
-        print(f"Text: {result['text']}")
-        if 'confidence' in result:
-            print(f"Confidence: {result['confidence']:.2f}")
-        print(f"Language: {result['language']}")
-        if 'status' in result:
-            print(f"Status: {result['status']}") 
+        result = asyncio.run(test_transcribe(args.file, args.url))    

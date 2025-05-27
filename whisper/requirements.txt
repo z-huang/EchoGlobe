@@ -20,3 +20,4 @@ numpy<2.0.0
 RealtimeSTT==0.3.104
 googletrans==4.0.2
 ipdb
+aiohttp==3.9.3
